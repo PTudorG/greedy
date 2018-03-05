@@ -1,58 +1,53 @@
-#include<iostream>
 #include<fstream>
+#include<iostream>
 using namespace std;
-typedef struct{float greutate;
-               float profit;
-               float eficienta;}
-               obiect;
+typedef struct {float greutate;
+                float profit;
+                float eficienta;} obiect;
 obiect M[100];
 float profit_total;
-float G;
-int n;
-fstream f("input.dat");
+float G,Gs=0,P=0;
+int n,h,aux,x=99,y;
 
 int read_data()
-{f>>n;f>>G;
-    for (int i=1;i<=n;i++)
-        {f>>M[i].greutate;
-        f>>M[i].profit;
-        M[i].eficienta=M[i].profit/M[i].greutate;}}
+{fstream f;
+f.open("inputks.dat",ios::in);
+f>>n;
+f>>G;
+for(int i=1;i<=n;i++)
+{f>>M[i].greutate;
+f>>M[i].profit;}
+f.close();}
 
 int sort_data()
-{int i,g,aux;
-    do{g=0;
-        for(i=0;i<n-1;i++)
-            if(M[i].eficienta<M[i+1].eficienta)
-            {aux=M[i].eficienta;
-            M[i].eficienta=M[i+1].eficienta;
-            M[i+1].eficienta=aux;
-            g=1;}}
-            while(g);}
+{for(int i=1;i<=n;i++)
+M[i].eficienta=M[i].profit/M[i].greutate;
+do{h=0;
+   for(int i=1;i<=n-1;i++)
+       if(M[i].eficienta>M[i+1].eficienta)
+         {aux=M[i].eficienta;
+          M[i].eficienta=M[i+1].eficienta;
+          M[i+1].eficienta=aux;h=1;}}
+    while(h!=0);}
 
 float sweet_greedy()
-{
-    float P=0;
-    float Ga=0,Gd;
-    for(int i=1;i<=n;i++)
-    {if(M[i].greutate+Ga<=G)
-        {P=P+M[i].profit;
-        Ga=Ga+M[i].greutate;}
-    else
-        {Gd=G-Ga;
-        while(Ga+Gd>G)
-        {M[i].greutate=M[i].greutate*99/100;
-        M[i].profit=M[i].profit*99/100;
-        Gd=M[i].greutate;}
-        P=P+M[i].profit;}}
-        return P;}
+{for(int i=1;i<=n;i++)
+{if(Gs<=G)
+{Gs=Gs+M[i].greutate;
+P=P+M[i].profit;y=i;}}
+if(Gs>G)
+{Gs=Gs-M[y].greutate;
+P=P-M[y].profit;
+while(Gs+M[y].greutate>G)
+{M[y].greutate=(x*M[y].greutate)/100;
+M[y].profit=(x*M[y].profit)/100;
+x--;}
+Gs=Gs+M[y].greutate;
+P=P+M[y].profit;}
+return P;}
 
-        int main()
-        {
-            read_data();
-            sort_data();
-            profit_total=sweet_greedy();
-            cout<<profit_total;
-        }
-
-
-
+int main()
+{read_data();
+sort_data();
+profit_total=sweet_greedy();
+cout<<profit_total;}
